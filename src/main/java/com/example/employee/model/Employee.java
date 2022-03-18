@@ -1,14 +1,12 @@
 package com.example.employee.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "employee")
 public class Employee {
@@ -27,14 +25,4 @@ public class Employee {
     @Email(message = "invalid Email")
     @Column(name = "email")
     private String email;
-
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
 }

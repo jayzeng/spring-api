@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,15 +21,22 @@ import java.util.List;
 @Validated
 @RequestMapping("/api")
 public class EmployeeController {
-    Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+    private Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     @Autowired
-    EmployeeService empService;
+    private EmployeeService empService;
+
+    @Autowired
+    private KafkaTemplate<String, Employee> kafkaTemplate;
+
+    private static final String TOPIC = "employee";
 
     @PostMapping(value = "/employee")
     public Employee create(@Valid @RequestBody Employee emp) {
         logger.info(emp.toString());
-        return empService.create(emp);
+        Employee newEmployee = empService.create(emp);
+        kafkaTemplate.send(TOPIC, emp);
+        return newEmployee;
     }
 
     @Operation(summary = "Get all employees")
